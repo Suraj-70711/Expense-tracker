@@ -2,222 +2,78 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Budget - Expense Tracker</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Expense Tracker</title>
 </head>
 
 <body>
-    <div class="container">
-        <header class="app-header">
-            <h1 class="app-title">Smart Budget</h1>
-            <div id="current-date"></div>
-        </header>
+    <div class="wrapper">
+        <h2>Expense Tracker</h2>
 
-        <div class="summary-cards">
-            <div class="summary-card card-balance">
-                <h3>Current Balance</h3>
-                <p id="total-balance">$0.00</p>
+        <!-- Authentication Container -->
+        <div id="auth-container">
+            <div id="when-signed-out">
+                <button id="sign-in" class="btn">Sign in with Google</button>
             </div>
-            <div class="summary-card card-income">
-                <h3>Total Income</h3>
-                <p id="total-income">$0.00</p>
-            </div>
-            <div class="summary-card card-expenses">
-                <h3>Total Expenses</h3>
-                <p id="total-expenses">$0.00</p>
+            <div id="when-signed-in">
+                <div id="user-details"></div>
+                <button id="sign-out" class="btn">Sign Out</button>
             </div>
         </div>
 
-        <div class="card">
-            <h2 class="section-title">Add New Transaction</h2>
-            <form id="transaction-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" id="description" class="form-control" placeholder="What was this for?"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="number" id="amount" class="form-control" placeholder="Amount" step="0.01" required>
-                    </div>
+        <div class="container">
+            <h4>Your Balance</h4>
+            <h1 id="balance">$0.00</h1>
+
+            <div class="inc-exp-container">
+                <div>
+                    <h4>Income</h4>
+                    <p id="money-plus" class="money plus">+$0.00</p>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="type" class="form-label">Type</label>
-                        <select id="type" class="form-control" required>
-                            <option value="expense">Expense</option>
-                            <option value="income">Income</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="category" class="form-label">Category</label>
-                        <select id="category" class="form-control" required>
-                            <option value="">Select a category</option>
-                            <!-- Categories will be populated by JavaScript -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" id="date" class="form-control" required>
-                    </div>
+                <div>
+                    <h4>Expense</h4>
+                    <p id="money-minus" class="money minus">-$0.00</p>
                 </div>
-                <!-- In the transaction form, add these fields -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="time" class="form-label">Time</label>
-                        <input type="time" id="time" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="for-whom" class="form-label">For Whom</label>
-                        <select id="for-whom" class="form-control" required>
-                            <option value="myself">Myself</option>
-                            <option value="others">Others</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="person-name-group" style="display: none;">
-                        <label for="person-name" class="form-label">Person's Name</label>
-                        <input type="text" id="person-name" class="form-control" placeholder="Enter name">
-                    </div>
+            </div>
+
+            <h3>History</h3>
+            <ul id="list" class="list">
+                <!-- Transactions will be added here -->
+            </ul>
+
+            <h3>Add new transaction</h3>
+            <form id="form">
+                <div class="form-control">
+                    <label for="text">Description</label>
+                    <input type="text" id="text" placeholder="Enter description..." />
                 </div>
-                <button type="submit" class="btn btn-primary">Add Transaction</button>
+                <div class="form-control">
+                    <label for="amount">Amount <br />
+                        (negative - expense, positive - income)</label>
+                    <input type="number" id="amount" placeholder="Enter amount..." step="0.01" />
+                </div>
+                <button class="btn">Add transaction</button>
             </form>
         </div>
 
-        <div class="card">
-            <h2 class="section-title">Recent Transactions</h2>
-            <div class="filters">
-                <div class="search-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-search" viewBox="0 0 16 16">
-                        <path
-                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                    </svg>
-                    <input type="text" id="search-transactions" placeholder="Search transactions...">
-                </div>
-                <div>
-                    <select id="filter-type" class="filter-dropdown">
-                        <option value="all">All Types</option>
-                        <option value="expense">Expenses</option>
-                        <option value="income">Income</option>
-                    </select>
-                    <select id="filter-category" class="filter-dropdown">
-                        <option value="all">All Categories</option>
-                        <!-- Categories will be populated by JavaScript -->
-                    </select>
-                    <!-- Add this to the filters div -->
-                    <select id="filter-for-whom" class="filter-dropdown">
-                        <option value="all">All People</option>
-                        <option value="myself">Myself</option>
-                        <option value="others">Others</option>
-                    </select>
-                </div>
-            </div>
-            <div id="transactions-container">
-                <div class="empty-state" id="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
-                        viewBox="0 0 16 16">
-                        <path
-                            d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z" />
-                        <path
-                            d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
-                    </svg>
-                    <p>No transactions yet. Add your first transaction to get started!</p>
-                    <button class="btn btn-primary" id="add-sample-data">Add Sample Data</button>
-                </div>
-                <table id="transactions-table" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Date</th>
-                            <th>Person</th>
-                            <th>Amount</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactions-list">
-                        <!-- Transactions will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2 class="section-title">Expense Breakdown</h2>
-            <div id="expense-chart-container" class="expenses-chart">
-                <!-- Chart will be populated by JavaScript -->
-                <canvas id="expense-chart"></canvas>
-            </div>
-        </div>
-
-        <!-- Add this section after the expense chart card -->
-        <div class="card">
-            <h2 class="section-title">Transaction Summary</h2>
-            <div class="time-range-selector">
-                <select id="summary-time-range" class="filter-dropdown">
-                    <option value="day">Day</option>
-                    <option value="week">Week</option>
-                    <option value="month">Month</option>
-                    <option value="year">Year</option>
-                </select>
-                <input type="date" id="summary-date" class="form-control">
-                <button id="generate-bill" class="btn btn-primary">Generate Bill</button>
-            </div>
-
-            <div class="summary-data">
-                <div class="summary-cards">
-                    <div class="summary-card card-income">
-                        <h3>Total Income</h3>
-                        <p id="period-income">$0.00</p>
-                    </div>
-                    <div class="summary-card card-expenses">
-                        <h3>Total Expenses</h3>
-                        <p id="period-expenses">$0.00</p>
-                    </div>
-                    <div class="summary-card card-others">
-                        <h3>Spent for Others</h3>
-                        <p id="period-others">$0.00</p>
-                    </div>
-                    <div class="summary-card card-self">
-                        <h3>Spent for Myself</h3>
-                        <p id="period-self">$0.00</p>
-                    </div>
-                </div>
-
-                <div id="period-transactions">
-                    <h3 class="subsection-title">Transactions in this period</h3>
-                    <div class="empty-period" id="empty-period">
-                        <p>No transactions found for this period.</p>
-                    </div>
-                    <table id="period-transactions-table" style="display: none;">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Category</th>
-                                <th>Date</th>
-                                <th>For</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody id="period-transactions-list">
-                            <!-- Transactions will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <footer>
+            <p>Created with Firebase Database & Authentication</p>
+        </footer>
     </div>
 
-    <div class="toast-container" id="toast-container">
-        <!-- Toasts will be added here by JavaScript -->
-    </div>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+
+    <!-- Your JavaScript -->
+    <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
 
